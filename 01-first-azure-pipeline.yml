@@ -10,11 +10,25 @@ pool:
   #vmImage: ubuntu-latest
   name: testAgent
 
-steps:
-- script: echo Hello, world changed!
-  displayName: 'Run a one-line script'
+# pipeline > stages > jobs > steps
+# if there is just one job, you can omit the jobs section
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script updated'
+jobs:
+- job: Job1
+  steps:
+  - script: echo Job 1 - Hello, world changed!
+    displayName: 'Run a one-line script'
+
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script updated'
+- job: Job2
+  steps:
+  - script: echo Job2 - Hello, world changed!
+    displayName: 'Run a one-line script'
+
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script updated'    
