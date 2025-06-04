@@ -1,0 +1,17 @@
+trigger:
+- main
+
+strategy:
+  matrix:
+    linux:
+      operatingSystem: 'ubuntu-latest'
+    mac:
+      operatingSystem: 'macos-latest'
+
+pool:
+  #vmImage: $(operatingSystem) #esto es lo qe debería estar habilitado, no es descomentado porqe solo se está ejecutando en testAgent
+  name: testAgent
+
+steps:
+- script: echo running on $(operatingSystem)
+  displayName: 'Run a one-line script'
