@@ -1,3 +1,8 @@
+# Kubernetes
+# Deployment and Service for Currency Exchange Application
+# This file defines a Deployment and a Service for the Currency Exchange application.
+# The Deployment manages the application pods, while the Service exposes the application to external traffic.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
