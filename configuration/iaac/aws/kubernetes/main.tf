@@ -8,7 +8,11 @@
 # terraform-backend-state-in28minutes-123
 # AKIA4AHVNOD7OOO6T4KI
 
-
+// se usa terraform porque es una herramienta de infraestructura como código (IaC) que permite definir y provisionar la infraestructura de manera declarativa.
+// no siempre es necesario usar terraform, pero es una buena práctica para gestionar la infraestructura de manera eficiente y reproducible.
+// los otros archivos tf que se tiene en el proyecto no tiene este bloque porque son ejemplos más simples o específicos que no requieren un backend de estado compartido.
+# El bloque de terraform define la configuración del proveedor y el backend de estado.
+# El bloque de terraform es necesario para definir la configuración del proveedor y el backend de estado.
 terraform {
   required_providers {
     aws = {
@@ -47,6 +51,7 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.cluster.token
 }
 
+// module se usa para crear un clúster de EKS en AWS
 module "in28minutes-cluster" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "~> 19.0"
