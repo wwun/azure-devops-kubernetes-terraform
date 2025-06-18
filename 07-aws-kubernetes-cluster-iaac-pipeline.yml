@@ -13,18 +13,20 @@ steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
+# inicializa el directorio de trabajo de Terraform y aplica la configuración para crear un clúster de Kubernetes en AWS
 - task: TerraformTask@5
   inputs:
     provider: 'aws'
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    backendServiceAWS: 'aws-for-terraform'
-    backendAWSBucketName: 'terraform-backend-state-in28minutes-123'
+    command: 'init' # inicializa el directorio de trabajo de Terraform, se ejecuta antes de aplicar cualquier configuración, des|
+    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes' # ruta donde se encuentra la configuración de Terraform
+    backendServiceAWS: 'aws-for-terraform' # nombre del servicio de conexión de Azure DevOps para AWS
+    backendAWSBucketName: 'terraform-backend-state-in28minutes-123' # nombre del bucket de S3 donde se almacenará el estado de Terraform
     backendAWSKey: 'kubernetes-dev-tfstate'
 
+# aplica la configuración de Terraform para crear el clúster de Kubernetes en AWS, creando los recursos necesarios
 - task: TerraformTask@5
   inputs:
     provider: 'aws'
-    command: 'apply'
+    command: 'apply'  # indica que se aplicará la configuración de Terraform
     workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/iaac/aws/kubernetes'
-    environmentServiceNameAWS: 'aws-for-terraform'
+    environmentServiceNameAWS: 'aws-for-terraform'  # servicio de AWS para la conexión y autenticación
