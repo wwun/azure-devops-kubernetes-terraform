@@ -10,7 +10,7 @@ resources:
   - repo: self
 
 variables:
-  tag: 35
+  tag: '$(Build.BuildId)' # variable que almacena el ID de la construcción actual, se utiliza como etiqueta para la imagen de Docker
 
 stages:
 - stage: Build
@@ -21,6 +21,17 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'  # utiliza una imagen de máquina virtual de Ubuntu para ejecutar el trabajo
     steps:
+
+    # Configura el entorno de Docker para la construcción de la imagen
+    - task: Docker@2
+      displayName: 'Build and push Docker image'
+      inputs:
+        containerRegistry: 'in28min-docker-hub' # nombre de la conexión de servicio de Docker
+        repository: 'in28min/currency-exchange-devops' # nombre del repositorio de Docker donde se almacenará la imagen
+        command: 'buildAndPush' # comando para construir y subir la imagen de Docker
+        Dockerfile: '**/Dockerfile' # ruta al archivo Dockerfile que se utilizará para construir la imagen
+        tags: '$(tag)' # etiqueta que se asignará a la imagen construida
+
     # Copia los archivos de la aplicación al directorio de trabajo del agente
     - task: CopyFiles@2
       inputs:
@@ -36,7 +47,7 @@ stages:
         publishLocation: 'Container' # indica que los artefactos se publicarán en un contenedor de Azure DevOps
 
 # en este punto, los artefactos de construcción se han publicado y están listos para ser utilizados en la siguiente etapa
-# agora, se define la etapa de despliegue, donde se descargarán los artefactos publicados y se aplicarán los manifiestos de Kubernetes
+# ahora, se define la etapa de despliegue, donde se descargarán los artefactos publicados y se aplicarán los manifiestos de Kubernetes
 - stage: Deploy
   displayName: Deploy image
   jobs:
@@ -58,4 +69,29 @@ stages:
         kubernetesServiceConnection: 'aws-kubernetes-cluster-service-connection' # nombre de la conexión de servicio de Kubernetes
         namespace: 'default' # espacio de nombres de Kubernetes donde se desplegarán los manifiestos
         manifests: '$(System.ArtifactsDirectory)/configuration/kubernetes/deployment.yaml' # ruta a los manifiestos de Kubernetes descargados
-        containers: wwun/currency-exchange-devops:$(tag) # nombre del contenedor y la etiqueta que se utilizarán en el despliegue
+        containers: in28min/currency-exchange-devops:$(tag) # nombre del contenedor y la etiqueta que se utilizarán en el despliegue, desde una imagen de Docker previamente construida
+
+
+
+
+
+
+
+
+# Propósito general:
+# Este archivo define una pipeline de Azure DevOps para construir y desplegar una aplicación en un clúster de Kubernetes alojado en AWS. La pipeline está dividida en dos etapas principales: Build y Deploy.
+
+# Etapas principales:
+
+# Build Stage:
+
+# Copia los archivos de la aplicación al directorio de trabajo del agente.
+# Publica los artefactos de construcción (como manifiestos de Kubernetes) en un contenedor de Azure DevOps para que puedan ser utilizados en etapas posteriores.
+
+# Deploy Stage:
+
+# Descarga los artefactos publicados en la etapa de construcción.
+# Aplica los manifiestos de Kubernetes descargados al clúster de Kubernetes en AWS, utilizando una conexión de servicio configurada previamente.
+# Resultado final:
+# La aplicación se construye y sus artefactos (como los manifiestos YAML) se publican.
+# Los manifiestos se despliegan en un clúster de Kubernetes en AWS, asegurando que la aplicación esté en ejecución en el entorno configurado
